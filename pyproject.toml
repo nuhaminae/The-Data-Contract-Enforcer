@@ -1,0 +1,59 @@
+# pyproject.toml
+
+[project]
+name = "the-data-contract-enforcer"
+version = "0.1.0"
+description = "Schema Integrity & Lineage Attribution System for Own's Platform." 
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.86.0",
+    "black>=26.3.1",
+    "dotenv>=0.9.9",
+    "flake8>=7.3.0",
+    "gitpython>=3.1.46",
+    "isort>=8.0.1",
+    "jsonschema>=4.26.0",
+    "langsmith>=0.7.22",
+    "numpy>=2.3.5",
+    "openai>=2.30.0",
+    "pandas>=2.3.3",
+    "pre-commit>=4.5.1",
+    "psycopg2>=2.9.11",
+    "pydantic>=2.12.5",
+    "pytest>=9.0.2",
+    "pyyaml>=6.0.3",
+    "scikit-learn>=1.8.0",
+    "soda-core>=4.3.0",
+    "yamllint>=1.38.0",
+    "ydata-profiling>=4.18.1",
+]
+
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+skip = [".venv"]
+
+[tool.flake8]
+max-line-length = 88
+ignore = ["E203", "W503", "E402"]
+exclude = [".venv", "venv", "env"]
+
+[tool.yamllint]
+extends = "default"
+
+[tool.yamllint.rules.truthy]
+level = "warning"
+allowed-values = ["true", "false"]
+
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "pytest",
+]
