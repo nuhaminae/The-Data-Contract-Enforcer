@@ -1,0 +1,16 @@
+version: 2
+models:
+- name: week4-lineage-snapshots
+  columns:
+  - name: snapshot_id
+    tests:
+    - not_null
+  - name: codebase_root
+    tests:
+    - not_null
+  - name: git_commit
+    tests:
+    - not_null
+  - name: captured_at
+    tests:
+    - not_null
