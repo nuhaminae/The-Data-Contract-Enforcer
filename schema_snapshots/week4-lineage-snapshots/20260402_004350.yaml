@@ -1,0 +1,34 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week4-lineage-snapshots
+info:
+  title: 'Auto-generated Contract: week4-lineage-snapshots'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  snapshot_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  codebase_root:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+  git_commit:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+  captured_at:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+    format: date-time
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
