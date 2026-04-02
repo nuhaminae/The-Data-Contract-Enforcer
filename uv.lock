@@ -2021,6 +2021,15 @@ wheels = [
 ]
 
 [[package]]
+name = "setuptools"
+version = "82.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4f/db/cfac1baf10650ab4d1c111714410d2fbb77ac5a616db26775db562c8fab2/setuptools-82.0.1.tar.gz", hash = "sha256:7d872682c5d01cfde07da7bccc7b65469d3dca203318515ada1de5eda35efbf9", size = 1152316, upload-time = "2026-03-09T12:47:17.221Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9d/76/f789f7a86709c6b087c5a2f52f911838cad707cc613162401badc665acfe/setuptools-82.0.1-py3-none-any.whl", hash = "sha256:a59e362652f08dcd477c78bb6e7bd9d80a7995bc73ce773050228a348ce2e5bb", size = 1006223, upload-time = "2026-03-09T12:47:15.026Z" },
+]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2133,6 +2142,7 @@ dependencies = [
     { name = "flake8" },
     { name = "gitpython" },
     { name = "isort" },
+    { name = "jinja2" },
     { name = "jsonschema" },
     { name = "langsmith" },
     { name = "numpy" },
@@ -2144,6 +2154,7 @@ dependencies = [
     { name = "pytest" },
     { name = "pyyaml" },
     { name = "scikit-learn" },
+    { name = "setuptools" },
     { name = "soda-core" },
     { name = "yamllint" },
     { name = "ydata-profiling" },
@@ -2166,6 +2177,7 @@ requires-dist = [
     { name = "gitpython", specifier = ">=3.1.46" },
     { name = "isort", specifier = ">=8.0.1" },
     { name = "isort", marker = "extra == 'dev'" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "jsonschema", specifier = ">=4.26.0" },
     { name = "langsmith", specifier = ">=0.7.22" },
     { name = "numpy", specifier = ">=2.3.5" },
@@ -2178,6 +2190,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'" },
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
+    { name = "setuptools", specifier = ">=82.0.1" },
     { name = "soda-core", specifier = ">=4.3.0" },
     { name = "yamllint", specifier = ">=1.38.0" },
     { name = "ydata-profiling", specifier = ">=4.18.1" },
