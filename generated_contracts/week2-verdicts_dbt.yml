@@ -1,0 +1,28 @@
+version: 2
+models:
+- name: week2-verdicts
+  columns:
+  - name: verdict_id
+    tests:
+    - not_null
+  - name: target_ref
+    tests:
+    - not_null
+  - name: rubric_id
+    tests:
+    - not_null
+  - name: rubric_version
+    tests:
+    - not_null
+  - name: overall_verdict
+    tests:
+    - not_null
+  - name: overall_score
+    tests:
+    - not_null
+  - name: confidence
+    tests:
+    - not_null
+  - name: evaluated_at
+    tests:
+    - not_null
