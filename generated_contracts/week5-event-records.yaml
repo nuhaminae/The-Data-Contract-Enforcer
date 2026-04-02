@@ -1,0 +1,53 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week5-event-records
+info:
+  title: 'Auto-generated Contract: week5-event-records'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  event_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 7
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  event_type:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 7
+  aggregate_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 3
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  aggregate_type:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 7
+  sequence_number:
+    type: integer
+    required: true
+    description: Inferred integer column with cardinality 5
+  schema_version:
+    type: integer
+    required: true
+    description: Inferred integer column with cardinality 1
+  occurred_at:
+    type: string
+    required: false
+    description: Inferred string column with cardinality 0
+    format: date-time
+  recorded_at:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 7
+    format: date-time
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
