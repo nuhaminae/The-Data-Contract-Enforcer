@@ -1,0 +1,63 @@
+{
+  "report_metadata": {
+    "contract_file": "generated_contracts\\week4-lineage-snapshots.yaml",
+    "data_file": "outputs\\week4\\lineage_snapshots.jsonl",
+    "report_generated_at": "2026-04-02T02:00:26.749888+00:00"
+  },
+  "validation_summary": {
+    "total_records_checked": 1,
+    "valid_records": 0,
+    "invalid_records": 1,
+    "pass_rate": 0.0
+  },
+  "errors": [
+    {
+      "record_index": 0,
+      "details": [
+        {
+          "error_type": "type_mismatch",
+          "field": "snapshot_id",
+          "expected": {
+            "type": "string",
+            "required": true,
+            "description": "Inferred string column with cardinality 1",
+            "format": "uuid",
+            "pattern": "^[0-9a-f-]{36}$"
+          },
+          "found": "str"
+        },
+        {
+          "error_type": "type_mismatch",
+          "field": "codebase_root",
+          "expected": {
+            "type": "string",
+            "required": true,
+            "description": "Inferred string column with cardinality 1"
+          },
+          "found": "str"
+        },
+        {
+          "error_type": "type_mismatch",
+          "field": "git_commit",
+          "expected": {
+            "type": "string",
+            "required": true,
+            "description": "Inferred string column with cardinality 1"
+          },
+          "found": "str"
+        },
+        {
+          "error_type": "type_mismatch",
+          "field": "captured_at",
+          "expected": {
+            "type": "string",
+            "required": true,
+            "description": "Inferred string column with cardinality 1",
+            "format": "date-time"
+          },
+          "found": "str"
+        }
+      ]
+    }
+  ]
+}
