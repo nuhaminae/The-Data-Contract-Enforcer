@@ -1,0 +1,13 @@
+version: 2
+models:
+- name: week1-intent-records
+  columns:
+  - name: intent_id
+    tests:
+    - not_null
+  - name: description
+    tests:
+    - not_null
+  - name: created_at
+    tests:
+    - not_null

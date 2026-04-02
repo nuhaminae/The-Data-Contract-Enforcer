@@ -1,0 +1,30 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week1-intent-records
+info:
+  title: 'Auto-generated Contract: week1-intent-records'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  intent_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 8
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  description:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 8
+  created_at:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 2
+    format: date-time
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
