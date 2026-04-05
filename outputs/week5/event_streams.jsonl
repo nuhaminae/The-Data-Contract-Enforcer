@@ -1,3 +1,0 @@
-{"stream_id": "comp-902e24b1-243b-4587-bcf2-09f57c6468e1", "aggregate_type": "comp", "current_version": 1, "created_at": "2026-03-26 06:50:36.451509+03:00", "archived_at": null, "metadata": {}}
-{"stream_id": "loan-e133260d-6402-4fca-a58a-e35a05ab933c", "aggregate_type": "loan", "current_version": 5, "created_at": "2026-03-26 06:50:34.917523+03:00", "archived_at": null, "metadata": {}}
-{"stream_id": "agent-456", "aggregate_type": "agent", "current_version": 1, "created_at": "2026-03-26 06:50:38.019441+03:00", "archived_at": null, "metadata": {}}
