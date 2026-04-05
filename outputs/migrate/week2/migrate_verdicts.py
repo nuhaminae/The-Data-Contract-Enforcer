@@ -1,162 +1,152 @@
 # outputs/migrate/week2/migrate_verdicts.py
-# This script migrates Week 2 verdict records from the old format (report_onpeer_generated.md+report_onself_generated.md) to the new format (verdict_records.jsonl) used in Week 7.
+# This script migrates Week 2 verdict records from the old format (report_onpeer_generated.md+report_onself_generated.md) to the new format (verdict_record.jsonl) used in Week 7.
 
+import hashlib
 import json
 import re
-import statistics
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 # ------------- Path setup -------------
+# This setup restores the original pathing from the script.
+# It assumes the script is located in a specific directory structure relative to the project root.
+try:
+    current_script_path = Path(__file__).resolve()
+    # Path to the root of the 'The-Data-Contract-Enforcer' project.
+    PROJECT_ROOT = current_script_path.parents[3]
 
-# Get the script's current directory
-current_script_path = Path(__file__).resolve()
+    # Path to the root of the 'student-work' directory.
+    CODE_PROJECT_DIRECTORY = current_script_path.parents[5]
+    # The specific root of the Week 2 'Automation-Auditor' project that contains the audit folder.
+    CODE_PROJECT_ROOT = (
+        CODE_PROJECT_DIRECTORY / "week2" / "Automation-Auditor" / "audit"
+    )
+except NameError:
+    # Fallback for interactive environments where __file__ is not defined
+    print(
+        "Warning: '__file__' not defined. Using current working directory as a fallback for paths."
+    )
+    PROJECT_ROOT = Path.cwd()
+    CODE_PROJECT_ROOT = PROJECT_ROOT
 
-# Go up levels to get to the project root
-PROJECT_ROOT = current_script_path.parents[5]
+print(f"Project root determined as: {PROJECT_ROOT}")
+print(f"Code project root for audit files determined as: {CODE_PROJECT_ROOT}")
 
-print(f"Project root directory: {PROJECT_ROOT}")
-
-
-# Helper: normalise "8 out of 10" -> 8
-def normalise_score(score_label):
-    match = re.match(r"(\d+)", score_label)
-    return int(match.group(1)) if match else None
-
-
-# Confidence based on variance of judge scores
-def compute_confidence(scores):
-    numeric_scores = [s for s in scores if s is not None]
-    if not numeric_scores:
-        return 0.7
-    if len(numeric_scores) == 1:
-        return 0.9
-    var = statistics.pvariance(numeric_scores)
-    conf = 1.0 - (var / 25.0)
-    return max(0.5, min(1.0, conf))
-
-
-# Load rubric.json to get rubric version
-with open(
-    PROJECT_ROOT / "week2" / "Automation-Auditor" / "rubrics" / "rubric.json"
-) as f:
-    rubric_data = json.load(f)
-rubric_version = rubric_data["rubric_metadata"]["version"]
-
-# Load audit.json
-with open(PROJECT_ROOT / "week2" / "Automation-Auditor" / "audit" / "audit.json") as f:
-    audit_data = json.load(f)
+# Define and create the output directory
+OUTPUT_DIR = PROJECT_ROOT / "outputs" / "week2"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+print(f"Output directory is set to: {OUTPUT_DIR}")
 
 
-def build_verdicts_from_json(audit):
-    verdicts = []
-    for crit in audit["criteria"]:
-        scores = []
-        numeric_scores = []
-        for opinion in crit["judge_opinions"]:
-            score = normalise_score(opinion["score_label"])
-            numeric_scores.append(score)
-            scores.append(
-                {
-                    "judge": opinion["judge"],
-                    "criterion_id": crit["dimension_id"],
-                    "score": score,
-                    "argument": opinion["argument"],
-                    "cited_evidence": opinion.get("cited_evidence", []),
-                }
-            )
-        verdicts.append(
-            {
-                "verdict_id": str(uuid.uuid4()),
-                "target_ref": audit["repo_url"],
-                "rubric_id": crit["dimension_id"],
-                "rubric_version": rubric_version,
-                "scores": scores,
-                "overall_verdict": audit["executive_summary"],
-                "overall_score": audit["overall_score"],
-                "confidence": compute_confidence(numeric_scores),
-                "evaluated_at": datetime.now(timezone.utc).isoformat(),
+def get_sha256(text):
+    """Computes the SHA-256 hash of a given text string."""
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
+def normalise_to_5(score_10):
+    """Normalises a score from a 0-10 scale to a 1-5 scale."""
+    if score_10 is None:
+        return 3
+    return round(float(score_10) / 2)
+
+
+def map_overall_verdict(score_5):
+    """Maps a 1-5 score to a canonical verdict string (PASS, FAIL, WARN)."""
+    if score_5 >= 4.0:
+        return "PASS"
+    if score_5 < 3.0:
+        return "FAIL"
+    return "WARN"
+
+
+def parse_verdicts_from_markdown(file_path):
+    """
+    Parses a markdown audit report to extract verdict details and structure them
+    into the canonical format.
+    """
+    with open(file_path, "r") as f:
+        content = f.read()
+
+    # 1. Extract target repository URL from the main header
+    target_match = re.search(r"Audit Report for (https://[^\s\n]+)", content)
+    target_ref = target_match.group(1) if target_match else "unknown_target"
+
+    # 2. Extract the overall numerical score
+    score_match = re.search(r"\*\*Overall Score:\*\*\s+([0-9.]+)", content)
+    overall_score = float(score_match.group(1)) if score_match else 3.0
+
+    # 3. Parse each criterion section to populate the 'scores' dictionary
+    # Splits the document by '## Criterion: ' which is the correct header level
+    sections = re.split(r"## Criterion: ", content)[1:]
+    scores_dict = {}
+
+    for sec in sections:
+        # Extract criterion name and ID from the section header
+        header_match = re.search(r"^(.*?)\s+\((.*?)\)", sec)
+        if not header_match:
+            continue
+        crit_name, crit_id = header_match.groups()
+
+        # Regex to find judge opinions starting with '-' and capture judge, score, and argument
+        judge_pattern = r"-\s+\*\*(.*?)\*\*: Score (\d+) out of 10, Argument: (.*?)(?=\n-|\n##|# Remediation|$)"
+        opinions = re.findall(judge_pattern, sec, re.DOTALL)
+
+        if opinions:
+            # Normalise scores from 1-10 to 1-5 and calculate the average
+            norm_scores = [normalise_to_5(int(o[1])) for o in opinions]
+            avg_crit_score = sum(norm_scores) / len(norm_scores)
+
+            # Join all judge arguments into a single 'notes' string
+            notes = " | ".join([f"{o[0]}: {o[2].strip()}" for o in opinions])
+
+            # Assemble the dictionary for the current criterion
+            scores_dict[crit_id] = {
+                "score": int(round(avg_crit_score)),
+                "evidence": [],  # This can be extended to extract evidence if available
+                "notes": notes,
             }
-        )
-    return verdicts
+
+    # 4. Construct the final canonical record for the verdict
+    return {
+        "verdict_id": str(uuid.uuid4()),
+        "target_ref": target_ref,
+        "rubric_id": get_sha256("automation_auditor_v3_rubric"),
+        "rubric_version": "3.0.0",
+        "scores": scores_dict,
+        "overall_verdict": map_overall_verdict(overall_score),
+        "overall_score": round(overall_score, 2),
+        "confidence": 0.95,
+        "evaluated_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 
-# Parse markdown reports
-def parse_markdown_report(path):
-    with open(path) as f:
-        text = f.read()
-    repo_match = re.search(r"Audit Report for (https://[^\s]+)", text)
-    repo_url = repo_match.group(1) if repo_match else "unknown"
-    score_match = re.search(r"\*\*Overall Score:\*\* ([0-9.]+)", text)
-    overall_score = float(score_match.group(1)) if score_match else None
+# --- Main Execution Block ---
+# Define the source markdown files using the corrected code project root path
+source_files = [
+    CODE_PROJECT_ROOT / "report_onpeer_generated.md",
+    CODE_PROJECT_ROOT / "report_onself_generated.md",
+]
 
-    criteria_blocks = re.split(r"## Criterion:", text)[1:]
-    verdicts = []
-    for block in criteria_blocks:
-        lines = block.strip().splitlines()
-        crit_line = lines[0]
-        crit_id = crit_line.split("(")[-1].strip(")")
-        scores = []
-        numeric_scores = []
-        for line in lines:
-            if "Score" in line and "Argument" in line:
-                judge = line.split(":")[0].strip("- *")
-                score_match = re.search(r"Score (\d+) out of 10", line)
-                score = int(score_match.group(1)) if score_match else None
-                if score is not None:
-                    numeric_scores.append(score)
-                arg = line.split("Argument:")[-1].strip()
-                scores.append(
-                    {
-                        "judge": judge,
-                        "criterion_id": crit_id,
-                        "score": score,
-                        "argument": arg,
-                        "cited_evidence": [],
-                    }
-                )
-        verdicts.append(
-            {
-                "verdict_id": str(uuid.uuid4()),
-                "target_ref": repo_url,
-                "rubric_id": crit_id,
-                "rubric_version": rubric_version,
-                "scores": scores,
-                "overall_verdict": "Automated audit completed.",
-                "overall_score": overall_score,
-                "confidence": compute_confidence(numeric_scores),
-                "evaluated_at": datetime.now(timezone.utc).isoformat(),
-            }
-        )
-    return verdicts
+print(f"Source files to be processed: {[str(f) for f in source_files]}")
 
-
-# Build verdicts from all sources
 verdicts = []
-verdicts.extend(build_verdicts_from_json(audit_data))
-verdicts.extend(
-    parse_markdown_report(
-        PROJECT_ROOT
-        / "week2"
-        / "Automation-Auditor"
-        / "audit"
-        / "report_onpeer_generated.md"
-    )
-)
-verdicts.extend(
-    parse_markdown_report(
-        PROJECT_ROOT
-        / "week2"
-        / "Automation-Auditor"
-        / "audit"
-        / "report_onself_generated.md"
-    )
-)
+for f_path in source_files:
+    if f_path.exists():
+        print(f"Processing {f_path.name}...")
+        verdicts.append(parse_verdicts_from_markdown(f_path))
+    else:
+        print(f"Warning: Source file not found - {f_path}")
 
-# Write JSONL
-with open("outputs/week2/verdicts.jsonl", "w") as f:
+# Write the processed verdicts to the output JSONL file
+output_file = OUTPUT_DIR / "verdict_record.jsonl"
+with open(output_file, "w") as f:
     for v in verdicts:
         f.write(json.dumps(v) + "\n")
 
-print(f"Wrote {len(verdicts)} verdict records to outputs/week2/verdicts.jsonl")
+if verdicts:
+    print(f"\nSuccessfully migrated {len(verdicts)} canonical records to {output_file}")
+else:
+    print(
+        "\nNo verdict records were generated. Please check if source files exist and paths are correct."
+    )
