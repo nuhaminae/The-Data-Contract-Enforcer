@@ -1,0 +1,54 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week2-verdicts
+info:
+  title: 'Auto-generated Contract: week2-verdicts'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  verdict_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 2
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  target_ref:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 2
+  rubric_id:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+    format: uuid
+    pattern: ^[0-9a-f-]{36}$
+  rubric_version:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+  overall_verdict:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+  overall_score:
+    type: number
+    required: true
+    description: Inferred number column with cardinality 2
+  confidence:
+    type: number
+    required: true
+    description: Inferred number column with cardinality 1
+    minimum: 0.0
+    maximum: 1.0
+  evaluated_at:
+    type: string
+    required: true
+    description: Inferred string column with cardinality 1
+    format: date-time
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
