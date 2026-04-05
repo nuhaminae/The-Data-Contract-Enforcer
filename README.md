@@ -118,6 +118,18 @@ python contracts/attributor.py --source <path_to_source_data.jsonl> --lineage <p
 python contracts/attributor.py --source outputs/week1/intent_record.jsonl --lineage outputs/week4/lineage_snapshots.jsonl --output outputs/week1/intent_record_attributed.jsonl
 ```
 
+- **Terminal Commands for Violation Creation**
+
+```bash
+python contracts/create_violation.py --input <path_to_clean_data.jsonl> --output <path_to_new_violated_data.jsonl>
+python contracts/runner.py --contract <path_to_contract.yaml> --data <path_to_violated_data.jsonl> --output <path_to_validation_report.json>
+
+# Example: Week 1: Intent-Code Correlator
+python contracts/create_violation.py --input outputs/week1/intent_record.jsonl --output outputs/week1/intent_record_violated.jsonl
+python contracts/runner.py --contract generated_contracts/week1-intent-records_dbt.yml --data outputs/week1/intent_record_violated.jsonl --output violation_log/week1_validation_FAILURE.json
+```
+
+
 - **Terminal Commands for Schema Evolution Analysis**
 
 ```bash
