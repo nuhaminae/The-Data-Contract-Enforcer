@@ -1,72 +1,106 @@
 # contracts/generator.py
-# Builds JSON/YAML contracts from extracted data profiles.
-# RUN Example : python contracts/generator.py --source outputs/week1/intent_records.jsonl --contract-id week1-intent-records --lineage outputs/week4/lineage_snapshots.jsonl --output generated_contracts/
+# This script generates a Bitol-compliant data contract and a corresponding dbt model file.
 
 import argparse
 import json
-import shutil
-from datetime import datetime, timezone
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import yaml
 
 
+def profile_data(df: pd.DataFrame) -> dict:
+    """
+    Analyses a pandas DataFrame and generates a Bitol-compliant schema object.
+    The output is a dictionary where keys are column names.
+    """
+    profiles = {}
+    for col in df.columns:
+        dtype = df[col].dtype
+
+        if np.issubdtype(dtype, np.integer):
+            col_type = "integer"
+        elif np.issubdtype(dtype, np.floating):
+            col_type = "float"
+        elif np.issubdtype(dtype, np.datetime64):
+            col_type = "timestamp"
+        elif dtype == "bool":
+            col_type = "boolean"
+        else:
+            col_type = "string"
+
+        # The schema for each column is now a dictionary.
+        profiles[col] = {
+            "type": col_type,
+            # Bitol uses 'required', which is the inverse of 'nullable'.
+            "required": not bool(df[col].isnull().any()),
+            "description": f"Inferred {col_type} column.",
+        }
+    return profiles
+
+
 class ContractGenerator:
-    def __init__(self, source_path, contract_id, lineage_path, output_dir):
-        self.source_path = Path(source_path)
+    """
+    Generates a Bitol data contract and a dbt model file from a data source.
+    """
+
+    def __init__(
+        self,
+        source: str,
+        contract_id: str,
+        lineage: str | None = None,
+        output: str | None = None,
+    ):
+        self.source = source
         self.contract_id = contract_id
-        self.lineage_path = Path(lineage_path)
-        self.output_dir = Path(output_dir)
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.lineage = lineage
+        self.output = output or "generated_contracts/"
+        self.source_name = Path(source).stem
+        self.output_path = Path(self.output)
+        self.output_path.mkdir(parents=True, exist_ok=True)
 
-    def load_and_flatten(self):
-        """Stage 1: Load JSONL and flatten nested structures (e.g., Week 3 facts) [5]."""
-        with open(self.source_path) as f:
+    def load_and_flatten(self) -> pd.DataFrame:
+        """
+        Load and flatten the source JSONL data.
+        """
+        with open(self.source, "r", encoding="utf-8") as f:
             records = [json.loads(l) for l in f if l.strip()]
+        return pd.json_normalize(records, sep="_")
 
-        rows = []
-        for r in records:
-            # Separate top-level fields from nested arrays
-            base = {k: v for k, v in r.items() if not isinstance(v, (list, dict))}
-            # Explode extracted_facts for Week 3 profiling [5]
-            facts = r.get("extracted_facts", [{}])
-            for fact in facts:
-                # Prefix nested fields to avoid collisions [7]
-                rows.append({**base, **{f"fact_{k}": v for k, v in fact.items()}})
-        return pd.DataFrame(rows)
+    def load_lineage_graph(self) -> dict:
+        """
+        Load the lineage graph from the specified file.
+        """
+        if self.lineage:
+            with open(self.lineage, "r", encoding="utf-8") as f:
+                return json.load(f)
+        return None
 
-    def profile_columns(self, df):
-        """Stage 2: Structural and Statistical Profiling [8, 9]."""
-        profiles = {}
-        for col in df.columns:
-            series = df[col]
-            profile = {
-                "name": col,
-                "dtype": str(series.dtype),
-                "null_fraction": float(series.isna().mean()),
-                "cardinality_estimate": int(series.nunique()),
-                "sample_values": [str(v) for v in series.dropna().unique()[:5]],
-            }
-            # Mandatory numeric stats for statistical drift detection [8, 10]
-            if pd.api.types.is_numeric_dtype(series):
-                profile["stats"] = {
-                    "min": float(series.min()),
-                    "max": float(series.max()),
-                    "mean": float(series.mean()),
-                    "stddev": float(series.std()),
-                    "p25": float(series.quantile(0.25)),
-                    "p50": float(series.quantile(0.5)),
-                    "p95": float(series.quantile(0.95)),
-                    "p99": float(series.quantile(0.99)),
-                }
-            profiles[col] = profile
-        return profiles
+    def get_upstream_sources(self, lineage_graph: dict) -> list[str]:
+        """
+        Finds upstream sources from the lineage graph related to the contract ID.
+        """
+        if not lineage_graph:
+            return []
 
-    def build_bitol_contract(self, profiles, df):
-        """Stage 3 & 4: Translate to Bitol YAML and Inject Lineage [11-13]."""
-        # Metadata [11]
-        contract = {
+        source_systems = set()
+        edges = lineage_graph.get("edges", [])
+
+        for edge in edges:
+            # Check if any part of the contract ID (e.g., 'week1', 'intent') is in the edge source
+            if any(
+                part in edge.get("source", "") for part in self.contract_id.split("-")
+            ):
+                source_systems.add(edge["source"])
+
+        return list(source_systems)
+
+    def build_bitol_contract(self, schema: dict, upstream_sources: list) -> dict:
+        """
+        Builds the main data contract in the Bitol-compliant format.
+        """
+        return {
             "kind": "DataContract",
             "apiVersion": "v3.0.0",
             "id": self.contract_id,
@@ -75,97 +109,91 @@ class ContractGenerator:
                 "version": "1.0.0",
                 "description": "Baseline contract generated from production data snapshots.",
             },
-            "schema": {},
-            "quality": {"type": "SodaChecks", "specification": {"checks": []}},
-            "lineage": {"upstream": [], "downstream": []},
+            "schema": schema,
+            "quality": {
+                "type": "SodaChecks",
+                "specification": {"checks": []},  # Placeholder for data quality checks
+            },
+            "lineage": {"upstream": upstream_sources, "downstream": []},
         }
 
-        # Generate Clauses [12]
-        for col, profile in profiles.items():
-            dtype_map = {
-                "float64": "number",
-                "int64": "integer",
-                "bool": "boolean",
-                "object": "string",
-            }
-            bitol_type = dtype_map.get(profile["dtype"], "string")
-
-            clause = {
-                "type": bitol_type,
-                "required": profile["null_fraction"] == 0.0,
-                "description": f"Inferred {bitol_type} column with cardinality {profile['cardinality_estimate']}",
-            }
-
-            # Week-specific logic for confidence/IDs/Dates [12, 14, 15]
-            if "confidence" in col:
-                clause.update({"minimum": 0.0, "maximum": 1.0})
-            if col.endswith("_id"):
-                clause.update({"format": "uuid", "pattern": "^[0-9a-f-]{36}$"})
-            if col.endswith("_at"):
-                clause.update({"format": "date-time"})
-
-            contract["schema"][col] = clause
-
-        # Inject Lineage [13]
-        if self.lineage_path.exists():
-            with open(self.lineage_path) as f:
-                snapshot = json.loads(f.readlines()[-1])  # Latest snapshot [13]
-            consumers = [
-                e["target"]
-                for e in snapshot.get("edges", [])
-                if self.contract_id.split("-") in e["source"]
-            ]
-            contract["lineage"]["downstream"] = [
-                {"id": c, "fields_consumed": list(df.columns[:3])} for c in consumers
-            ]
-
-        return contract
-
-    def generate_dbt_output(self, contract):
-        """Stage 5: Parallel dbt schema.yml with test definitions [4]."""
-        dbt_schema = {
-            "version": 2,
-            "models": [{"name": self.contract_id, "columns": []}],
-        }
-        for col, clause in contract["schema"].items():
+    def build_dbt_model(self, schema: dict) -> dict:
+        """
+        Builds the dbt model file with 'not_null' tests for required columns.
+        """
+        columns = []
+        for name, details in schema.items():
+            col_spec = {"name": name}
             tests = []
-            if clause.get("required"):
+            if details.get("required"):
                 tests.append("not_null")
-            if clause.get("unique"):
-                tests.append("unique")
-            dbt_schema["models"][0]["columns"].append({"name": col, "tests": tests})
-        return dbt_schema
+            if tests:
+                col_spec["tests"] = tests
+            columns.append(col_spec)
+
+        return {
+            "version": 2,
+            "models": [{"name": self.contract_id, "columns": columns}],
+        }
 
     def run(self):
+        """
+        Run the data contract generator and save both files.
+        """
         df = self.load_and_flatten()
-        profiles = self.profile_columns(df)
-        contract = self.build_bitol_contract(profiles, df)
-        dbt_yaml = self.generate_dbt_output(contract)
+        schema = profile_data(df)
 
-        # Write Main Contract
-        main_path = self.output_dir / f"{self.contract_id}.yaml"
-        with open(main_path, "w") as f:
-            yaml.dump(contract, f, sort_keys=False)
+        lineage_graph = self.load_lineage_graph()
+        upstream_sources = self.get_upstream_sources(lineage_graph)
 
-        # Write dbt Version [4]
-        with open(self.output_dir / f"{self.contract_id}_dbt.yml", "w") as f:
-            yaml.dump(dbt_yaml, f, sort_keys=False)
+        # Build and save the main Bitol contract
+        bitol_contract = self.build_bitol_contract(schema, upstream_sources)
+        bitol_output_path = self.output_path / f"{self.contract_id}.yaml"
+        with open(bitol_output_path, "w", encoding="utf-8") as f:
+            yaml.dump(
+                bitol_contract,
+                f,
+                default_flow_style=False,
+                sort_keys=False,
+                allow_unicode=True,
+            )
+        print(f"✅ Successfully created Bitol contract: {bitol_output_path}")
 
-        # Snapshot Discipline: Mandatory for Phase 3 [6, 16]
-        snap_dir = Path("schema_snapshots") / self.contract_id
-        snap_dir.mkdir(parents=True, exist_ok=True)
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        shutil.copy(main_path, snap_dir / f"{ts}.yaml")
-        print(f" Generated contract and snapshot for {self.contract_id}")
+        # Build and save the dbt model file
+        dbt_model = self.build_dbt_model(schema)
+        dbt_output_path = self.output_path / f"{self.contract_id}_dbt.yml"
+        with open(dbt_output_path, "w", encoding="utf-8") as f:
+            yaml.dump(
+                dbt_model,
+                f,
+                default_flow_style=False,
+                sort_keys=False,
+                allow_unicode=True,
+            )
+        print(f"✅ Successfully created dbt model: {dbt_output_path}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--source", required=True)
-    parser.add_argument("--contract-id", required=True)
-    parser.add_argument("--lineage", required=True)
-    parser.add_argument("--output", required=True)
+    parser = argparse.ArgumentParser(
+        description="Generate a Bitol-compliant data contract and dbt model."
+    )
+    parser.add_argument("--source", help="Path to the data source file.", required=True)
+    parser.add_argument(
+        "--contract-id", help="The ID of the data contract.", required=True
+    )
+    parser.add_argument(
+        "--lineage", help="Path to the lineage graph file.", required=False
+    )
+    parser.add_argument(
+        "--output", help="Path to the output directory.", required=False
+    )
+
     args = parser.parse_args()
 
-    gen = ContractGenerator(args.source, args.contract_id, args.lineage, args.output)
+    gen = ContractGenerator(
+        source=args.source,
+        contract_id=args.contract_id,
+        lineage=args.lineage,
+        output=args.output,
+    )
     gen.run()
