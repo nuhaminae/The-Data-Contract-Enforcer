@@ -1,0 +1,14 @@
+{
+  "contract_id": null,
+  "data_source": "outputs/week4/lineage_snapshots_violated.jsonl",
+  "status": "pass",
+  "schema_validation": {
+    "status": "pass",
+    "message": "All schema checks passed.",
+    "checks": []
+  },
+  "quality_validation": {
+    "status": "pass",
+    "message": "Soda checks passed (simulated)."
+  }
+}
