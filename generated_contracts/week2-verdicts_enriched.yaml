@@ -1,0 +1,223 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week2-verdicts
+info:
+  title: 'Auto-generated Contract: week2-verdicts'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  verdict_id:
+    type: string
+    required: true
+    description: The 'verdict_id' column in the 'week2-verdicts' contract contains
+      unique identifiers for each verdict record as strings.
+  target_ref:
+    type: string
+    required: true
+    description: The 'target_ref' column in the 'week2-verdicts' contract contains
+      string references to targeted entities or items.
+  rubric_id:
+    type: string
+    required: true
+    description: The rubric_id column in the week2-verdicts contract contains string
+      identifiers used to categorise verdicts.
+  rubric_version:
+    type: string
+    required: true
+    description: The rubric_version column contains string data representing different
+      versions of the rubrics associated with the week2-verdicts contract ID.
+  overall_verdict:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''overall_verdict'' column contains
+      the final decision or verdict for each contract ID in the ''week2-verdicts''
+      data contract.'
+  overall_score:
+    type: float
+    required: true
+    description: The 'overall_score' column represents the total score assigned to
+      each contract ID, measured in float format.
+  confidence:
+    type: float
+    required: true
+    description: The confidence column represents the probability of correctness for
+      verdicts associated with contract ID 'week2-verdicts', measured in float data
+      type.
+  evaluated_at:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''evaluated_at'' column records the
+      timestamp of evaluations for each contract instance with Contract ID ''week2-verdicts''.'
+  scores_git_forensic_analysis_score:
+    type: integer
+    required: true
+    description: The scores_git_forensic_analysis_score column represents the integer
+      score of Git forensic analysis for each contract instance.
+  scores_git_forensic_analysis_evidence:
+    type: string
+    required: true
+    description: The scores from Git forensic analysis evidence stored in the 'scores_git_forensic_analysis_evidence'
+      column of the 'week2-verdicts' contract ID.
+  scores_git_forensic_analysis_notes:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_git_forensic_analysis_notes''
+      column contains string data describing forensic analysis notes related to Git
+      scores for the week2-verdicts contract ID.'
+  scores_state_management_rigor_score:
+    type: integer
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The scores_state_management_rigor_score
+      column in the week2-verdicts contract ID stores an integer value representing
+      rigor score for state management.'
+  scores_state_management_rigor_evidence:
+    type: string
+    required: true
+    description: The scores state management rigor evidence column in the week2-verdicts
+      contract ID stores string data representing various evidence states for score
+      management rigidity.
+  scores_state_management_rigor_notes:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_state_management_rigor_notes''
+      column records detailed notes on the rigor of state management scoring in the
+      ''week2-verdicts'' contract.'
+  scores_graph_orchestration_score:
+    type: integer
+    required: true
+    description: The scores_graph_orchestration_score column represents integer scores
+      associated with the 'week2-verdicts' contract ID.
+  scores_graph_orchestration_evidence:
+    type: string
+    required: true
+    description: The 'scores_graph_orchestration_evidence' column in the 'week2-verdicts'
+      contract ID stores string data representing evidence scores and orchestration
+      graphs.
+  scores_graph_orchestration_notes:
+    type: string
+    required: true
+    description: The 'scores_graph_orchestration_notes' column contains string notes
+      related to scores and orchestration processes for the 'week2-verdicts' contract
+      ID.
+  scores_safe_tool_engineering_score:
+    type: integer
+    required: true
+    description: The scores for safe engineering tools in the week 2 contract audits.
+  scores_safe_tool_engineering_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_safe_tool_engineering_evidence''
+      column contains string values representing safety scores of engineering tools
+      and equipment in the ''week2-verdicts'' contract.'
+  scores_safe_tool_engineering_notes:
+    type: string
+    required: true
+    description: The 'scores_safe_tool_engineering_notes' column in the 'week2-verdicts'
+      contract ID stores string values representing engineering notes related to safe
+      tools.
+  scores_structured_output_enforcement_score:
+    type: integer
+    required: true
+    description: The structured output enforcement score, represented as an integer,
+      indicates the level of enforcement compliance assessed for each contract instance.
+  scores_structured_output_enforcement_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_structured_output_enforcement_evidence''
+      column contains structured textual evidence scores associated with the contract
+      ID ''week2-verdicts''.'
+  scores_structured_output_enforcement_notes:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_structured_output_enforcement_notes''
+      column in the ''week2-verdicts'' contract ID stores structured notes related
+      to enforcement from scored outputs in English.'
+  scores_judicial_nuance_score:
+    type: integer
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_judicial_nuance_score'' column
+      in the ''week2-verdicts'' contract ID contains integer values representing judicial
+      nuance scores.'
+  scores_judicial_nuance_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_judicial_nuance_evidence''
+      column contains string data representing judicial nuance and evidence scores
+      for the ''week2-verdicts'' contract ID.'
+  scores_judicial_nuance_notes:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_judicial_nuance_notes'' column
+      contains string data representing judicial nuances and notes associated with
+      scores in the ''week2-verdicts'' contract.'
+  scores_chief_justice_synthesis_score:
+    type: integer
+    required: true
+    description: The 'scores_chief_justice_synthesis_score' column in the 'week2-verdicts'
+      contract ID stores integer values representing synthesis scores of chief justices.
+  scores_chief_justice_synthesis_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The scores_chief_justice_synthesis_evidence
+      column in the week2-verdicts contract ID contains synthesised evidence evaluation
+      scores as string data type.'
+  scores_chief_justice_synthesis_notes:
+    type: string
+    required: true
+    description: The 'scores_chief_justice_synthesis_notes' column in the 'week2-verdicts'
+      contract ID contains synthesis notes of scores provided by the chief justice
+      in string format.
+  scores_Documentation_score:
+    type: integer
+    required: true
+    description: The 'scores_Documentation_score' column in the 'week2-verdicts' contract
+      ID contains integer values representing documentation scores.
+  scores_Documentation_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_Documentation_evidence''
+      column in the ''week2-verdicts'' contract contains string data representing
+      scores related to documentation and evidence evaluations.'
+  scores_Documentation_notes:
+    type: string
+    required: true
+    description: The scores provided in the 'scores_Documentation_notes' column under
+      the contract ID 'week2-verdicts' represent evaluations and notes on documentation
+      quality.
+  scores_Cross-Reference_score:
+    type: integer
+    required: true
+    description: The scores_Cross-Reference_score column contains integer values representing
+      scores associated with the Cross-Reference in the week2-verdicts contract.
+  scores_Cross-Reference_evidence:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''scores_Cross-Reference_evidence''
+      column in the ''week2-verdicts'' contract contains string data representing
+      cross-reference evidence scores.'
+  scores_Cross-Reference_notes:
+    type: string
+    required: true
+    description: The 'scores_Cross-Reference_notes' column in the 'week2-verdicts'
+      contract contains string data representing notes cross-referenced with scores.
+  scores_swarm_visual_score:
+    type: integer
+    required: true
+    description: The 'scores_swarm_visual_score' column contains integer values representing
+      swarm visual scores associated with the 'week2-verdicts' contract ID.
+  scores_swarm_visual_evidence:
+    type: string
+    required: true
+    description: The 'scores_swarm_visual_evidence' column in the 'week2-verdicts'
+      contract ID stores string data representing visual evidence scores.
+  scores_swarm_visual_notes:
+    type: string
+    required: true
+    description: Scores and notes from swarm visual reviews recorded for each week.
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []

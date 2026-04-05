@@ -1,0 +1,46 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week4-lineage-snapshots
+info:
+  title: 'Auto-generated Contract: week4-lineage-snapshots'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  snapshot_id:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The snapshot ID in the ''week4-lineage-snapshots''
+      contract represents a unique identifier for each snapshot.'
+  codebase_root:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''codebase_root'' column contains
+      the root directory path of each codebase under the specified contract ID.'
+  git_commit:
+    type: string
+    required: true
+    description: The 'git_commit' column stores the commit ID from the version control
+      system for each record in the 'week4-lineage-snapshots' contract.
+  nodes:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''nodes'' column contains a string
+      representation of node information associated with the ''week4-lineage-snapshots''
+      contract ID.'
+  edges:
+    type: string
+    required: true
+    description: The 'edges' column in the 'week4-lineage-snapshots' contract ID contains
+      string data representing connections or relationships between entities.
+  captured_at:
+    type: string
+    required: true
+    description: The captured_at column records timestamps of data captures in the
+      week4-lineage-snapshots contract ID.
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []

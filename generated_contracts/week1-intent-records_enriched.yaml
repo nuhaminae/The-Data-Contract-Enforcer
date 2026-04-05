@@ -1,0 +1,40 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week1-intent-records
+info:
+  title: 'Auto-generated Contract: week1-intent-records'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  intent_id:
+    type: string
+    required: true
+    description: The intent_id column in the week1-intent-records contract ID contains
+      string data representing unique identifiers for intents.
+  description:
+    type: string
+    required: true
+    description: The 'description' column in the 'week1-intent-records' contract ID
+      stores a textual description associated with each record.
+  code_refs:
+    type: string
+    required: true
+    description: The 'code_refs' column in the 'week1-intent-records' contract ID
+      contains references to codes as string data type.
+  governance_tags:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: Governance tags associated with each record
+      in the week1-intent-records contract ID.'
+  created_at:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''created_at'' column records the
+      creation timestamps of intent records in the specified week.'
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []

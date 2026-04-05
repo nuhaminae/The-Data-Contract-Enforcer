@@ -1,0 +1,80 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: langsmith-trace-records
+info:
+  title: 'Auto-generated Contract: langsmith-trace-records'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  id:
+    type: string
+    required: true
+    description: The 'id' column in the 'langsmith-trace-records' contract stores
+      unique string identifiers for each record.
+  name:
+    type: string
+    required: true
+    description: The 'name' column in the 'langsmith-trace-records' contract ID stores
+      string values representing names or identifiers.
+  run_type:
+    type: string
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''run_type'' column in the ''langsmith-trace-records''
+      contract ID stores information about the type of execution or operation performed.'
+  error:
+    type: string
+    required: false
+    description: The 'error' column in the 'langsmith-trace-records' contract ID stores
+      error messages encountered during execution.
+  start_time:
+    type: string
+    required: true
+    description: The 'start_time' column records the start timestamps of each record
+      in string format for the 'langsmith-trace-records' contract.
+  end_time:
+    type: string
+    required: true
+    description: The 'end_time' column in the 'langsmith-trace-records' contract ID
+      contains string data representing the end time of each record.
+  total_tokens:
+    type: string
+    required: true
+    description: The 'total_tokens' column in the 'total_tokens' column of the 'langsmith-trace-records'
+      contract ID stores the total number of tokens used in language model interactions.
+  prompt_tokens:
+    type: string
+    required: true
+    description: The 'prompt_tokens' column records the number of tokens used in the
+      prompt for each language model interaction, stored as a string.
+  completion_tokens:
+    type: string
+    required: true
+    description: The 'completion_tokens' column in the 'langsmith-trace-records' contract
+      ID records the number of tokens used in completions.
+  total_cost:
+    type: float
+    required: true
+    description: The total cost column tracks the financial expenditure associated
+      with each contract ID 'langsmith-trace-records'.
+  tags:
+    type: string
+    required: true
+    description: The 'tags' column contains a string of space-separated tags associated
+      with each contract ID 'langsmith-trace-records'.
+  parent_run_id:
+    type: string
+    required: true
+    description: The parent run identifier column in the data contract records the
+      unique ID of the parent record for each entry.
+  session_id:
+    type: string
+    required: true
+    description: The session ID column captures unique identifiers for each user session
+      in the 'langsmith-trace-records' contract.
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []

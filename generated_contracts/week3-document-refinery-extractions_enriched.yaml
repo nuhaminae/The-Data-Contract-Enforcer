@@ -1,0 +1,65 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: week3-document-refinery-extractions
+info:
+  title: 'Auto-generated Contract: week3-document-refinery-extractions'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  doc_id:
+    type: string
+    required: true
+    description: The doc_id column stores unique string identifiers for each document
+      in the week3-document-refinery-extractions contract.
+  source_path:
+    type: string
+    required: true
+    description: The 'source_path' column in the 'source_path' column stores the file
+      path of the source document associated with each contract.
+  source_hash:
+    type: string
+    required: true
+    description: The 'source_hash' column in the 'source_hash' data contract stores
+      a unique string identifier of the source document.
+  extracted_facts:
+    type: string
+    required: true
+    description: The 'extracted_facts' column contains string data representing extracted
+      facts associated with the 'week3-document-refinery-extractions' contract ID.
+  entities:
+    type: string
+    required: true
+    description: The 'entities' column contains a string representation of all entities
+      extracted from the contract with ID 'week3-document-refinery-extractions'.
+  extraction_model:
+    type: string
+    required: true
+    description: The 'extraction_model' column contains the identifier of the model
+      used for document extraction, represented as a string.
+  processing_time_ms:
+    type: integer
+    required: true
+    description: 'ONE-SENTENCE DESCRIPTION: The ''processing_time_ms'' column records
+      the processing time in milliseconds for each document extraction task.'
+  extracted_at:
+    type: string
+    required: true
+    description: The 'extracted_at' column records the timestamp of when each extracted
+      document was processed.
+  token_count_input:
+    type: integer
+    required: true
+    description: The 'token_count_input' column represents the number of tokens in
+      input data used for contract extraction processes.
+  token_count_output:
+    type: integer
+    required: true
+    description: The 'token_count_output' column in the 'week3-document-refinery-extractions'
+      contract records the number of tokens processed.
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
