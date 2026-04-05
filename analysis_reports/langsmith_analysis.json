@@ -1,0 +1,29 @@
+{
+  "contract_id": "langsmith-trace-records",
+  "source_contract": "generated_contracts\\langsmith-trace-records.yaml",
+  "analysis_generated_at": "2026-04-05T00:44:40.977838+00:00",
+  "schema_analysis": {
+    "total_columns": 13,
+    "column_type_counts": {
+      "string": 12,
+      "float": 1
+    },
+    "required_columns_count": 12,
+    "required_columns": [
+      "id",
+      "name",
+      "run_type",
+      "start_time",
+      "end_time",
+      "total_tokens",
+      "prompt_tokens",
+      "completion_tokens",
+      "total_cost",
+      "tags",
+      "parent_run_id",
+      "session_id"
+    ],
+    "undescribed_columns_count": 0,
+    "undescribed_columns": []
+  }
+}

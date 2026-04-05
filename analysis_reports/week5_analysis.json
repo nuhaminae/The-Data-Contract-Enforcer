@@ -1,0 +1,29 @@
+{
+  "contract_id": "week5-event-records",
+  "source_contract": "generated_contracts\\week5-event-records.yaml",
+  "analysis_generated_at": "2026-04-05T00:44:34.665409+00:00",
+  "schema_analysis": {
+    "total_columns": 203,
+    "column_type_counts": {
+      "string": 151,
+      "integer": 1,
+      "float": 51
+    },
+    "required_columns_count": 11,
+    "required_columns": [
+      "event_id",
+      "event_type",
+      "aggregate_id",
+      "aggregate_type",
+      "sequence_number",
+      "schema_version",
+      "occurred_at",
+      "recorded_at",
+      "metadata_correlation_id",
+      "metadata_user_id",
+      "metadata_source_service"
+    ],
+    "undescribed_columns_count": 0,
+    "undescribed_columns": []
+  }
+}

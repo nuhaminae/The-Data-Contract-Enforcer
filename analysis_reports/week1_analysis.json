@@ -1,0 +1,21 @@
+{
+  "contract_id": "week1-intent-records",
+  "source_contract": "generated_contracts\\week1-intent-records.yaml",
+  "analysis_generated_at": "2026-04-05T00:44:05.052470+00:00",
+  "schema_analysis": {
+    "total_columns": 5,
+    "column_type_counts": {
+      "string": 5
+    },
+    "required_columns_count": 5,
+    "required_columns": [
+      "intent_id",
+      "description",
+      "code_refs",
+      "governance_tags",
+      "created_at"
+    ],
+    "undescribed_columns_count": 0,
+    "undescribed_columns": []
+  }
+}
