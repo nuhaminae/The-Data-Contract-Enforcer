@@ -1,0 +1,45 @@
+# contract_registry/subscriptions.yaml
+# This file lists all the teams and services that officially depend on our data contracts.
+
+- subscription_id: sub_compliance_dashboard_week2
+  # This is the contract for the courtroom verdicts.
+  contract_id: week2-verdicts
+  consumer:
+    team: "Compliance Dashboard Team"
+    owner: "compliance-dash-alerts@yourcompany.com"
+  notifications:
+    # If the contract is violated, send an alert to this Slack channel.
+    channel: "slack"
+    endpoint: "#compliance-alerts"
+  usage_details:
+    purpose: "To power the real-time executive dashboard for audit and compliance status."
+    criticality: "High"
+
+- subscription_id: sub_nlp_model_week3
+  # This is the contract for the raw text extracted from documents.
+  contract_id: week3-document-refinery-extractions
+  consumer:
+    team: "Data Science & ML Team"
+    owner: "data-science-oncall@yourcompany.com"
+  notifications:
+    # For this critical ML pipeline, page the on-call engineer.
+    channel: "pagerduty"
+    endpoint: "ds-ml-prod-service-key"
+  usage_details:
+    purpose: "To provide training data for the next-generation document classification model."
+    criticality: "Medium"
+
+- subscription_id: sub_dev_analytics_week1
+  # This is the contract for the original developer intents.
+  contract_id: week1-intent-records
+  consumer:
+    team: "Developer Experience Analytics"
+    owner: "dev-analytics-group@yourcompany.com"
+  notifications:
+    # For general analytics, an email is sufficient.
+    channel: "email"
+    endpoint: "dev-analytics-reports@yourcompany.com"
+  usage_details:
+    purpose: "To analyse the correlation between developer intent and code changes over time."
+    criticality: "Low"
+
