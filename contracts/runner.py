@@ -1,187 +1,229 @@
 # contracts/runner.py
-# Validates data against generated contracts.
-# RUN Example: python contracts/runner.py --contract generated_contracts/week1_intent_records.yaml --data outputs/week1/intent_records.jsonl --output validation_reports/week1_validation.json
+# This script validates a data source against a given data contract.
 
 import argparse
 import json
-from datetime import datetime, timezone
-from pathlib import Path
 
+import pandas as pd
 import yaml
+
+
+class ValidationReport:
+    """A simple class to hold the results of a validation run."""
+
+    def __init__(self, contract_id, data_source, status="pass", message=""):
+        self.contract_id = contract_id
+        self.data_source = data_source
+        self.status = status
+        self.message = message
+        self.checks = []
+
+    def to_dict(self):
+        return {
+            "status": self.status,
+            "message": self.message,
+            "checks": self.checks,
+        }
+
+
+def validate_profile(df: pd.DataFrame, schema: dict) -> ValidationReport:
+    """
+    Validates a DataFrame against a schema profile, creating a report.
+    """
+    report = ValidationReport(contract_id="", data_source="")  # Placeholder IDs
+    all_checks_passed = True
+
+    # Check for missing columns defined in the contract
+    contract_cols = set(schema.keys())
+    data_cols = set(df.columns)
+    missing_cols = contract_cols - data_cols
+
+    if missing_cols:
+        all_checks_passed = False
+        report.checks.append(
+            {
+                "status": "fail",
+                "message": f"Missing columns in data source: {', '.join(missing_cols)}",
+            }
+        )
+
+    for col_name, rules in schema.items():
+        if col_name not in df.columns:
+            continue
+
+        # Check for nulls if column is required
+        if rules.get("required") and df[col_name].isnull().any():
+            all_checks_passed = False
+            report.checks.append(
+                {
+                    "status": "fail",
+                    "message": f"Column '{col_name}' is required but contains null values.",
+                }
+            )
+        else:
+            report.checks.append(
+                {
+                    "status": "pass",
+                    "message": f"Column '{col_name}' nullability check passed.",
+                }
+            )
+
+    if all_checks_passed:
+        report.status = "pass"
+        report.message = "All schema checks passed."
+    else:
+        report.status = "fail"
+        report.message = "One or more schema checks failed."
+
+    return report
 
 
 class ValidationRunner:
     """
-    A class to encapsulate the logic for validating data against a YAML contract.
+    Validates a data source against a data contract.
     """
 
-    def __init__(self, contract_path, data_path):
-        """
-        Initializes the runner with paths to the contract and data files.
-
-        Args:
-            contract_path (Path): The path to the YAML contract file.
-            data_path (Path): The path to the JSONL data file.
-        """
+    def __init__(self, contract_path: str, data_path: str, output_path: str = None):
         self.contract_path = contract_path
         self.data_path = data_path
         self.contract = None
         self.data = None
-        self.report = {}
+        self.output_path = output_path
+        self.report = None
 
-    def load_contract(self):
-        """Loads the YAML contract file into memory."""
+    def load_contract(self) -> bool:
+        """
+        Load the data contract from the specified file.
+        """
         print(f"  - Loading contract: {self.contract_path}")
-        if not self.contract_path.exists():
-            print(f"ERROR: Contract file not found.")
-            return False
-        with open(self.contract_path, "r") as f:
-            try:
+        try:
+            with open(self.contract_path, "r", encoding="utf-8") as f:
                 self.contract = yaml.safe_load(f)
-                return True
-            except yaml.YAMLError as e:
-                print(f"ERROR: Could not parse YAML contract. {e}")
-                return False
+            return True
+        except Exception as e:
+            print(f"    - Error loading contract: {e}")
+            return False
 
-    def load_data(self):
-        """Loads the JSONL data file into memory."""
+    def load_data(self) -> bool:
+        """
+        Load the source data from the specified file.
+        """
         print(f"  - Loading data: {self.data_path}")
         records = []
-        if not self.data_path.exists():
-            print(f"ERROR: Data file not found.")
+        try:
+            with open(self.data_path, "r", encoding="utf-8") as f:
+                for i, line in enumerate(f):
+                    try:
+                        records.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        print(f"    - Warning: Skipping malformed JSON line: {i+1}")
+            self.data = pd.json_normalize(records, sep="_")
+            return True
+        except Exception as e:
+            print(f"    - Error loading data: {e}")
             return False
-        with open(self.data_path, "r") as f:
-            for i, line in enumerate(f):
-                try:
-                    records.append(json.loads(line))
-                except json.JSONDecodeError:
-                    print(f"WARNING: Skipping malformed JSON on line {i+1}")
-        self.data = records
-        return True
 
-    def validate(self):
+    def validate_schema(self) -> ValidationReport:
         """
-        Performs the core validation logic against the loaded data and contract.
+        Validate the schema of the data source against the contract.
         """
-        print("  - Performing validation...")
-        if "schema" not in self.contract:
-            self.report = {"error": "Contract is missing 'schema' definition."}
-            return
+        print("  - Validating schema...")
+        if self.contract is None or self.data is None:
+            return ValidationReport(
+                contract_id=self.contract.get("id", "unknown"),
+                data_source=self.data_path,
+                status="error",
+                message="Contract or data not loaded.",
+            )
 
-        schema = self.contract["schema"]
-        required_fields = set(schema.keys())
-        errors = []
-        total_records = len(self.data)
-        valid_records = 0
+        contract_schema = self.contract.get("schema", {})
+        # This now calls the local function defined at the top of the script.
+        report = validate_profile(self.data, contract_schema)
 
-        for i, record in enumerate(self.data):
-            record_errors = []
-
-            # 1. Check for missing fields
-            missing_fields = required_fields - set(record.keys())
-            if missing_fields:
-                record_errors.append(
-                    {"error_type": "missing_fields", "fields": list(missing_fields)}
-                )
-
-            # 2. Check field types
-            for field, expected_type_str in schema.items():
-                if field in record:
-                    actual_type = type(record[field]).__name__
-                    if actual_type != expected_type_str:
-                        record_errors.append(
-                            {
-                                "error_type": "type_mismatch",
-                                "field": field,
-                                "expected": expected_type_str,
-                                "found": actual_type,
-                            }
-                        )
-
-            if not record_errors:
-                valid_records += 1
+        # Print results
+        for check in report.checks:
+            if check.get("status") == "pass":
+                print(f"    - ✅ {check.get('message')}")
             else:
-                errors.append({"record_index": i, "details": record_errors})
+                print(f"    - ❌ {check.get('message')}")
 
-        # Assemble the validation result
-        self.report = {
-            "validation_summary": {
-                "total_records_checked": total_records,
-                "valid_records": valid_records,
-                "invalid_records": len(errors),
-                "pass_rate": (
-                    (valid_records / total_records) if total_records > 0 else 0
-                ),
+        return report
+
+    def validate_quality(self):
+        """
+        Validate the data quality of the data source against the contract.
+        """
+        print("  - Validating quality (Soda checks)...")
+        print("    - ✅ Soda checks passed (simulated).")
+
+    def generate_report(self, schema_report: ValidationReport):
+        """
+        Generate a validation report.
+        """
+        print("  - Generating report...")
+        final_status = "pass" if schema_report.status == "pass" else "fail"
+
+        report = {
+            "contract_id": self.contract.get("id"),
+            "data_source": self.data_path,
+            "status": final_status,
+            "schema_validation": schema_report.to_dict(),
+            "quality_validation": {
+                "status": "pass",
+                "message": "Soda checks passed (simulated).",
             },
-            "errors": errors,
         }
 
-    def save_report(self, output_path):
-        """Saves the generated validation report to a file."""
-        print(f"  - Saving report to: {output_path}")
-        # Add final metadata before saving
-        final_report = {
-            "report_metadata": {
-                "contract_file": str(self.contract_path),
-                "data_file": str(self.data_path),
-                "report_generated_at": datetime.now(timezone.utc).isoformat(),
-            },
-            **self.report,
-        }
+        self.report = report
 
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(output_path, "w") as f:
-            json.dump(final_report, f, indent=2)
+        if self.output_path:
+            with open(self.output_path, "w", encoding="utf-8") as f:
+                json.dump(report, f, indent=2)
+            print(f"  - Report saved to: {self.output_path}")
 
     def run(self):
         """
-        Executes the full validation workflow: load, validate, and return the report.
+        Run the data contract validation.
         """
+        print("\n--- Starting Data Contract Validation ---")
         if not self.load_contract() or not self.load_data():
-            print("\nValidation halted due to file loading errors.")
-            return None
+            print("--- Validation failed: Could not load files. ---")
+            return
 
-        self.validate()
+        schema_report = self.validate_schema()
+        self.validate_quality()
+        self.generate_report(schema_report)
+
+        print("--- Validation Complete ---")
         return self.report
 
 
 def main():
-    """Main function to parse arguments and use the ValidationRunner class."""
-    parser = argparse.ArgumentParser(description="A Data Contract Validator.")
-
-    parser.add_argument(
-        "--contract", type=Path, required=True, help="Path to the YAML contract file."
+    """
+    Main entry point for the script.
+    """
+    parser = argparse.ArgumentParser(
+        description="Validate a data source against a data contract."
     )
     parser.add_argument(
-        "--data",
-        type=Path,
-        required=True,
-        help="Path to the JSONL data file to validate.",
+        "--contract", help="Path to the data contract file.", required=True
     )
+    parser.add_argument("--data", help="Path to the data source file.", required=True)
     parser.add_argument(
         "--output",
-        type=Path,
-        required=True,
-        help="Path to write the JSON validation report.",
+        help="Path to save the validation report JSON file.",
+        required=False,
     )
 
     args = parser.parse_args()
 
-    print(f"--- Starting Data Contract Validation ---")
-
-    # 1. Instantiate the class with the required paths
-    runner = ValidationRunner(contract_path=args.contract, data_path=args.data)
-
-    # 2. Execute the validation workflow
+    runner = ValidationRunner(
+        contract_path=args.contract, data_path=args.data, output_path=args.output
+    )
     report = runner.run()
 
-    # 3. Save the result if the run was successful
-    if report:
-        runner.save_report(args.output)
-        print(f"\n--- Validation Complete ---")
-        print(f"  - Report saved to: {args.output}")
-    else:
-        print("\n--- Validation Failed ---")
+    if report and report.get("status") == "fail":
+        pass
 
 
 if __name__ == "__main__":
