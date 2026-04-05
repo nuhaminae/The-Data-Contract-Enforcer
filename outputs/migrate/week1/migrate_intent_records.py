@@ -1,106 +1,113 @@
 # outputs/migrate/week1/migrate_records.py
-# This script migrates Week 1 intent records from the old format (active_intents.yaml + agent_trace.jsonl) to the new format (intent_records.jsonl) used in Week 7.
+# This script migrates Week 1 intent records from the old format (active_intents.yaml) to the new format (intent_record.jsonl) used in Week 7.
 
 import json
+import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 import yaml
 
-# Get the script's current directory
-current_script_path = Path(__file__).resolve()
 
-# Go up levels to get to the project root
-PROJECT_ROOT = current_script_path.parents[5]
+def analyse_code_file(file_path_str, code_project_root):
+    """
+    Performs basic static analysis on a single source file.
+    """
+    # Construct the full path to the source code file
+    full_path = code_project_root / file_path_str
 
-print(f"Project root directory: {PROJECT_ROOT}")
+    # --- DEBUGGING STEP ---
+    # This line will print the exact path it's trying to open.
+    print(f"    - Analysing path: {full_path}")
+    # --- END DEBUGGING STEP ---
 
+    try:
+        content = full_path.read_text().splitlines()
+        line_count = len(content)
+        symbol_name = full_path.stem
 
-# --- Load active intents ---
-# Construct the full path from the dynamically found project root
-intents_path = (
-    PROJECT_ROOT / "week1" / "Roo-Code" / ".orchestration" / "active_intents.yaml"
-)
-
-print(f"Loading intents from: {intents_path}")
-with open(intents_path) as f:
-    intents = yaml.safe_load(f)["active_intents"]
-
-
-# --- Load trace records ---
-# Construct the full path from the dynamically found project root
-trace_path = (
-    PROJECT_ROOT / "week1" / "Roo-Code" / ".orchestration" / "agent_trace.jsonl"
-)
-
-print(f"Loading traces from: {trace_path}")
-trace_records = []
-with open(trace_path) as f:
-    for line in f:
-        trace_records.append(json.loads(line))
-
-print("\nSuccessfully loaded files!")
-
-
-# Group trace timestamps by intent_id
-intent_timestamps = {}
-for rec in trace_records:
-    iid = rec["intent_id"]
-    ts = datetime.fromisoformat(rec["timestamp"].replace("Z", "+00:00"))
-    if iid not in intent_timestamps or ts < intent_timestamps[iid]:
-        intent_timestamps[iid] = ts
+        return {
+            "line_start": 1,
+            "line_end": line_count if line_count > 0 else 1,
+            "symbol": symbol_name,
+            "confidence": 0.8,
+        }
+    except FileNotFoundError:
+        print(f"    - WARNING: Code file NOT FOUND at the path above.")
+        return {
+            "line_start": 1,
+            "line_end": 1,
+            "symbol": "placeholder_symbol (file not found)",
+            "confidence": 0.1,
+        }
+    except Exception as e:
+        print(f"    - ERROR: Could not read file. Error: {e}")
+        return {
+            "line_start": 1,
+            "line_end": 1,
+            "symbol": "placeholder_symbol (read error)",
+            "confidence": 0.0,
+        }
 
 
-# Governance tag mapping function
-def infer_tags(intent):
-    tags = set()
-    text = (intent["name"] + " " + " ".join(intent.get("constraints", []))).lower()
-    if "auth" in text or "jwt" in text or "middleware" in text:
-        tags.add("auth")
-    if (
-        "scope" in text
-        or "security" in text
-        or "validation" in text
-        or "approval" in text
-    ):
-        tags.add("security")
-    if "governance" in text or "policy" in text:
-        tags.add("governance")
-    if "trace" in text or "log" in text or "hash" in text or "mutation" in text:
-        tags.add("traceability")
-    if "evolution" in text or "refactor" in text:
-        tags.add("evolution")
-    if not tags:
-        tags.add("general")
-    return list(tags)
+def migrate_intents():
+    """
+    Migrates intent records from YAML to the canonical JSONL format.
+    """
+    # Define the two key root directories explicitly.
+
+    # The overall project root where the script is run from.
+    PROJECT_ROOT = Path.cwd()
+
+    # The specific root of the Week 1 'Roo-Code' project that contains the 'src' folder.
+    current_script_path = Path(__file__).resolve()
+    CODE_PROJECT_DIRECTORY = current_script_path.parents[5]
+    CODE_PROJECT_ROOT = CODE_PROJECT_DIRECTORY / "week1" / "Roo-Code"
+
+    # Define paths relative to the correct roots.
+    input_yaml = CODE_PROJECT_ROOT / ".orchestration" / "active_intents.yaml"
+    OUTPUT_DIR = PROJECT_ROOT / "outputs" / "week1"
+
+    output_path = OUTPUT_DIR / "intent_record.jsonl"
+
+    print(f"Overall Project Root: {PROJECT_ROOT}")
+    print(f"Code Project Root:    {CODE_PROJECT_ROOT}")
+    print(f"Input file:           {input_yaml}")
+    print(f"Output file:          {output_path}")
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    with open(input_yaml) as f:
+        source_intents = yaml.safe_load(f)["active_intents"]
+
+    migrated_records = []
+
+    print("\nStarting migration...")
+    for intent in source_intents:
+        print(f"- Processing intent: {intent['id']}")
+
+        code_refs = []
+        if intent.get("owned_scope"):
+            for file_path in intent["owned_scope"]:
+                # Pass the root directory for the code analysis
+                analysis_results = analyse_code_file(file_path, CODE_PROJECT_ROOT)
+                code_refs.append({"file": file_path, **analysis_results})
+
+        canonical_record = {
+            "intent_id": str(uuid.uuid5(uuid.NAMESPACE_DNS, intent["id"])),
+            "description": f"{intent['name']} | {'; '.join(intent.get('constraints', []))}",
+            "code_refs": code_refs,
+            "governance_tags": ["general"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        migrated_records.append(canonical_record)
+
+    with open(output_path, "w") as f_out:
+        for record in migrated_records:
+            f_out.write(json.dumps(record) + "\n")
+
+    print(f"\nSuccessfully migrated {len(migrated_records)} intent records.")
 
 
-# Build Week 7 intent_records.jsonl
-output = []
-for intent in intents:
-    record = {
-        "intent_id": intent["id"],
-        "description": intent["name"]
-        + " | "
-        + "; ".join(intent.get("constraints", [])),
-        "code_refs": [
-            {
-                "file": path,
-                "line_start": 0,
-                "line_end": 0,
-                "symbol": None,
-                "confidence": 1.0,
-            }
-            for path in intent.get("owned_scope", [])
-        ],
-        "governance_tags": infer_tags(intent),
-        "created_at": intent_timestamps.get(
-            intent["id"], datetime.now(timezone.utc)
-        ).isoformat(),
-    }
-    output.append(record)
-
-# Write JSONL
-with open("outputs/week1/intent_records.jsonl", "w") as f:
-    for rec in output:
-        f.write(json.dumps(rec) + "\n")
+if __name__ == "__main__":
+    migrate_intents()
