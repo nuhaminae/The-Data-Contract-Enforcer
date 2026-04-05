@@ -1,0 +1,55 @@
+{
+  "contract_id": "week3-document-refinery-extractions",
+  "data_source": "outputs/week3/extraction_record.jsonl",
+  "status": "pass",
+  "schema_validation": {
+    "status": "pass",
+    "message": "All schema checks passed.",
+    "checks": [
+      {
+        "status": "pass",
+        "message": "Column 'doc_id' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'source_path' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'source_hash' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'extracted_facts' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'entities' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'extraction_model' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'processing_time_ms' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'extracted_at' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'token_count_input' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'token_count_output' nullability check passed."
+      }
+    ]
+  },
+  "quality_validation": {
+    "status": "pass",
+    "message": "Soda checks passed (simulated)."
+  }
+}

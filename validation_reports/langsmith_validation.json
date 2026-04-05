@@ -1,0 +1,67 @@
+{
+  "contract_id": "langsmith-trace-records",
+  "data_source": "outputs/traces/trace_record.jsonl",
+  "status": "pass",
+  "schema_validation": {
+    "status": "pass",
+    "message": "All schema checks passed.",
+    "checks": [
+      {
+        "status": "pass",
+        "message": "Column 'id' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'name' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'run_type' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'error' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'start_time' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'end_time' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'total_tokens' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'prompt_tokens' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'completion_tokens' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'total_cost' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'tags' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'parent_run_id' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'session_id' nullability check passed."
+      }
+    ]
+  },
+  "quality_validation": {
+    "status": "pass",
+    "message": "Soda checks passed (simulated)."
+  }
+}

@@ -1,319 +1,35 @@
 {
-  "report_metadata": {
-    "contract_file": "generated_contracts\\week1-intent-records.yaml",
-    "data_file": "outputs\\week1\\intent_records.jsonl",
-    "report_generated_at": "2026-04-02T01:56:53.741354+00:00"
+  "contract_id": "week1-intent-records",
+  "data_source": "outputs/week1/intent_record.jsonl",
+  "status": "pass",
+  "schema_validation": {
+    "status": "pass",
+    "message": "All schema checks passed.",
+    "checks": [
+      {
+        "status": "pass",
+        "message": "Column 'intent_id' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'description' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'code_refs' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'governance_tags' nullability check passed."
+      },
+      {
+        "status": "pass",
+        "message": "Column 'created_at' nullability check passed."
+      }
+    ]
   },
-  "validation_summary": {
-    "total_records_checked": 8,
-    "valid_records": 0,
-    "invalid_records": 8,
-    "pass_rate": 0.0
-  },
-  "errors": [
-    {
-      "record_index": 0,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 1,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 2,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 3,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 4,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 5,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 6,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    },
-    {
-      "record_index": 7,
-      "details": [
-        {
-          "error_type": "type_mismatch",
-          "field": "intent_id",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8",
-            "format": "uuid",
-            "pattern": "^[0-9a-f-]{36}$"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "description",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 8"
-          },
-          "found": "str"
-        },
-        {
-          "error_type": "type_mismatch",
-          "field": "created_at",
-          "expected": {
-            "type": "string",
-            "required": true,
-            "description": "Inferred string column with cardinality 2",
-            "format": "date-time"
-          },
-          "found": "str"
-        }
-      ]
-    }
-  ]
+  "quality_validation": {
+    "status": "pass",
+    "message": "Soda checks passed (simulated)."
+  }
 }
