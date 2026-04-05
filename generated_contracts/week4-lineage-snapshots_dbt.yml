@@ -11,6 +11,12 @@ models:
   - name: git_commit
     tests:
     - not_null
+  - name: nodes
+    tests:
+    - not_null
+  - name: edges
+    tests:
+    - not_null
   - name: captured_at
     tests:
     - not_null

@@ -26,3 +26,93 @@ models:
   - name: evaluated_at
     tests:
     - not_null
+  - name: scores_git_forensic_analysis_score
+    tests:
+    - not_null
+  - name: scores_git_forensic_analysis_evidence
+    tests:
+    - not_null
+  - name: scores_git_forensic_analysis_notes
+    tests:
+    - not_null
+  - name: scores_state_management_rigor_score
+    tests:
+    - not_null
+  - name: scores_state_management_rigor_evidence
+    tests:
+    - not_null
+  - name: scores_state_management_rigor_notes
+    tests:
+    - not_null
+  - name: scores_graph_orchestration_score
+    tests:
+    - not_null
+  - name: scores_graph_orchestration_evidence
+    tests:
+    - not_null
+  - name: scores_graph_orchestration_notes
+    tests:
+    - not_null
+  - name: scores_safe_tool_engineering_score
+    tests:
+    - not_null
+  - name: scores_safe_tool_engineering_evidence
+    tests:
+    - not_null
+  - name: scores_safe_tool_engineering_notes
+    tests:
+    - not_null
+  - name: scores_structured_output_enforcement_score
+    tests:
+    - not_null
+  - name: scores_structured_output_enforcement_evidence
+    tests:
+    - not_null
+  - name: scores_structured_output_enforcement_notes
+    tests:
+    - not_null
+  - name: scores_judicial_nuance_score
+    tests:
+    - not_null
+  - name: scores_judicial_nuance_evidence
+    tests:
+    - not_null
+  - name: scores_judicial_nuance_notes
+    tests:
+    - not_null
+  - name: scores_chief_justice_synthesis_score
+    tests:
+    - not_null
+  - name: scores_chief_justice_synthesis_evidence
+    tests:
+    - not_null
+  - name: scores_chief_justice_synthesis_notes
+    tests:
+    - not_null
+  - name: scores_Documentation_score
+    tests:
+    - not_null
+  - name: scores_Documentation_evidence
+    tests:
+    - not_null
+  - name: scores_Documentation_notes
+    tests:
+    - not_null
+  - name: scores_Cross-Reference_score
+    tests:
+    - not_null
+  - name: scores_Cross-Reference_evidence
+    tests:
+    - not_null
+  - name: scores_Cross-Reference_notes
+    tests:
+    - not_null
+  - name: scores_swarm_visual_score
+    tests:
+    - not_null
+  - name: scores_swarm_visual_evidence
+    tests:
+    - not_null
+  - name: scores_swarm_visual_notes
+    tests:
+    - not_null

@@ -9,42 +9,155 @@ schema:
   verdict_id:
     type: string
     required: true
-    description: Inferred string column with cardinality 30
-    format: uuid
-    pattern: ^[0-9a-f-]{36}$
+    description: Inferred string column.
   target_ref:
     type: string
     required: true
-    description: Inferred string column with cardinality 2
+    description: Inferred string column.
   rubric_id:
     type: string
     required: true
-    description: Inferred string column with cardinality 10
-    format: uuid
-    pattern: ^[0-9a-f-]{36}$
+    description: Inferred string column.
   rubric_version:
     type: string
     required: true
-    description: Inferred string column with cardinality 1
+    description: Inferred string column.
   overall_verdict:
     type: string
     required: true
-    description: Inferred string column with cardinality 2
+    description: Inferred string column.
   overall_score:
-    type: number
+    type: float
     required: true
-    description: Inferred number column with cardinality 2
+    description: Inferred float column.
   confidence:
-    type: number
+    type: float
     required: true
-    description: Inferred number column with cardinality 7
-    minimum: 0.0
-    maximum: 1.0
+    description: Inferred float column.
   evaluated_at:
     type: string
     required: true
-    description: Inferred string column with cardinality 3
-    format: date-time
+    description: Inferred string column.
+  scores_git_forensic_analysis_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_git_forensic_analysis_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_git_forensic_analysis_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_state_management_rigor_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_state_management_rigor_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_state_management_rigor_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_graph_orchestration_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_graph_orchestration_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_graph_orchestration_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_safe_tool_engineering_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_safe_tool_engineering_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_safe_tool_engineering_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_structured_output_enforcement_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_structured_output_enforcement_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_structured_output_enforcement_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_judicial_nuance_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_judicial_nuance_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_judicial_nuance_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_chief_justice_synthesis_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_chief_justice_synthesis_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_chief_justice_synthesis_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_Documentation_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_Documentation_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_Documentation_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_Cross-Reference_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_Cross-Reference_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_Cross-Reference_notes:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_swarm_visual_score:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  scores_swarm_visual_evidence:
+    type: string
+    required: true
+    description: Inferred string column.
+  scores_swarm_visual_notes:
+    type: string
+    required: true
+    description: Inferred string column.
 quality:
   type: SodaChecks
   specification:

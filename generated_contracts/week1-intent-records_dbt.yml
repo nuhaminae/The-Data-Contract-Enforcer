@@ -8,6 +8,12 @@ models:
   - name: description
     tests:
     - not_null
+  - name: code_refs
+    tests:
+    - not_null
+  - name: governance_tags
+    tests:
+    - not_null
   - name: created_at
     tests:
     - not_null

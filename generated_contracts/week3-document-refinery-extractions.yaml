@@ -1,35 +1,51 @@
 kind: DataContract
 apiVersion: v3.0.0
-id: week4-lineage-snapshots
+id: week3-document-refinery-extractions
 info:
-  title: 'Auto-generated Contract: week4-lineage-snapshots'
+  title: 'Auto-generated Contract: week3-document-refinery-extractions'
   version: 1.0.0
   description: Baseline contract generated from production data snapshots.
 schema:
-  snapshot_id:
+  doc_id:
     type: string
     required: true
     description: Inferred string column.
-  codebase_root:
+  source_path:
     type: string
     required: true
     description: Inferred string column.
-  git_commit:
+  source_hash:
     type: string
     required: true
     description: Inferred string column.
-  nodes:
+  extracted_facts:
     type: string
     required: true
     description: Inferred string column.
-  edges:
+  entities:
     type: string
     required: true
     description: Inferred string column.
-  captured_at:
+  extraction_model:
     type: string
     required: true
     description: Inferred string column.
+  processing_time_ms:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  extracted_at:
+    type: string
+    required: true
+    description: Inferred string column.
+  token_count_input:
+    type: integer
+    required: true
+    description: Inferred integer column.
+  token_count_output:
+    type: integer
+    required: true
+    description: Inferred integer column.
 quality:
   type: SodaChecks
   specification:

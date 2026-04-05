@@ -9,18 +9,23 @@ schema:
   intent_id:
     type: string
     required: true
-    description: Inferred string column with cardinality 8
-    format: uuid
-    pattern: ^[0-9a-f-]{36}$
+    description: Inferred string column.
   description:
     type: string
     required: true
-    description: Inferred string column with cardinality 8
+    description: Inferred string column.
+  code_refs:
+    type: string
+    required: true
+    description: Inferred string column.
+  governance_tags:
+    type: string
+    required: true
+    description: Inferred string column.
   created_at:
     type: string
     required: true
-    description: Inferred string column with cardinality 2
-    format: date-time
+    description: Inferred string column.
 quality:
   type: SodaChecks
   specification:

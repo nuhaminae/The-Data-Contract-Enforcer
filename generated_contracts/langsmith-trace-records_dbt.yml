@@ -1,0 +1,41 @@
+version: 2
+models:
+- name: langsmith-trace-records
+  columns:
+  - name: id
+    tests:
+    - not_null
+  - name: name
+    tests:
+    - not_null
+  - name: run_type
+    tests:
+    - not_null
+  - name: error
+  - name: start_time
+    tests:
+    - not_null
+  - name: end_time
+    tests:
+    - not_null
+  - name: total_tokens
+    tests:
+    - not_null
+  - name: prompt_tokens
+    tests:
+    - not_null
+  - name: completion_tokens
+    tests:
+    - not_null
+  - name: total_cost
+    tests:
+    - not_null
+  - name: tags
+    tests:
+    - not_null
+  - name: parent_run_id
+    tests:
+    - not_null
+  - name: session_id
+    tests:
+    - not_null

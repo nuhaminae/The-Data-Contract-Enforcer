@@ -1,0 +1,67 @@
+kind: DataContract
+apiVersion: v3.0.0
+id: langsmith-trace-records
+info:
+  title: 'Auto-generated Contract: langsmith-trace-records'
+  version: 1.0.0
+  description: Baseline contract generated from production data snapshots.
+schema:
+  id:
+    type: string
+    required: true
+    description: Inferred string column.
+  name:
+    type: string
+    required: true
+    description: Inferred string column.
+  run_type:
+    type: string
+    required: true
+    description: Inferred string column.
+  error:
+    type: string
+    required: false
+    description: Inferred string column.
+  start_time:
+    type: string
+    required: true
+    description: Inferred string column.
+  end_time:
+    type: string
+    required: true
+    description: Inferred string column.
+  total_tokens:
+    type: string
+    required: true
+    description: Inferred string column.
+  prompt_tokens:
+    type: string
+    required: true
+    description: Inferred string column.
+  completion_tokens:
+    type: string
+    required: true
+    description: Inferred string column.
+  total_cost:
+    type: float
+    required: true
+    description: Inferred float column.
+  tags:
+    type: string
+    required: true
+    description: Inferred string column.
+  parent_run_id:
+    type: string
+    required: true
+    description: Inferred string column.
+  session_id:
+    type: string
+    required: true
+    description: Inferred string column.
+quality:
+  type: SodaChecks
+  specification:
+    checks: []
+lineage:
+  upstream: []
+  downstream: []
